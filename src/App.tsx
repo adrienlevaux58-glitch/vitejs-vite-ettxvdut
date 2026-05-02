@@ -289,24 +289,14 @@ export default function App() {
     const prompt = `Tu es un chef cuisinier français. L'utilisateur veut cuisiner avec : "${q}".${filters} Génère exactement 3 recettes pour 2 personnes. Réponds UNIQUEMENT en JSON valide sans texte avant/après ni backticks. Format : {"recettes":[{"titre":"...","temps":"20 min","difficulte":"Facile","calories":"350kcal","personnes":2,"ingredients":["200g de poulet","1 citron","2 gousses d'ail"],"etapes":["Étape 1 détaillée","Étape 2 détaillée","Étape 3 détaillée"]},{"titre":"...","temps":"...","difficulte":"Moyen","calories":"...kcal","personnes":2,"ingredients":["..."],"etapes":["...","...","..."]},{"titre":"...","temps":"...","difficulte":"Difficile","calories":"...kcal","personnes":2,"ingredients":["..."],"etapes":["...","...","..."]}]}`;
  
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/chat", {
         method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "anthropic-version": "2023-06-01",
-          "x-api-key": import.meta.env.VITE_ANTHROPIC_KEY,
-          "anthropic-dangerous-direct-browser-access": "true",
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1500,
-          messages: [{ role: "user", content: prompt }],
-        }),
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ prompt }),
       });
-      if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `Erreur ${res.status}`); }
+      if (!res.ok) { const e = await res.json(); throw new Error(e.error || `Erreur ${res.status}`); }
       const data = await res.json();
-      const text = (data.content || []).map((i: any) => i.text || "").join("");
-      const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
+      const parsed = JSON.parse(data.text.replace(/```json|```/g, "").trim());
       addHistory(q);
       setRecipes(parsed.recettes);
     } catch (e: any) {
