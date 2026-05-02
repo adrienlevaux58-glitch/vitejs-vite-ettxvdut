@@ -16,7 +16,7 @@ const FILTERS = ["Végétarien", "Sans gluten", "Rapide", "Léger"];
 function scaleIngredient(ingredient: string, from: number, to: number): string {
   if (from === to) return ingredient;
   const ratio = to / from;
-  return ingredient.replace(/(\d+(?:[.,]\d+)?)/g, (match, num) => {
+  return ingredient.replace(/(\d+(?:[.,]\d+)?)/g, (_match, num) => {
     const original = parseFloat(num.replace(",", "."));
     const scaled = original * ratio;
     const rounded = scaled < 10 ? Math.round(scaled * 10) / 10 : Math.round(scaled);
