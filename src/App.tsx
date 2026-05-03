@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
  
-export const STRIPE_PK  = "pk_live_51SKOJo2dHVNeNnOnhnFxHcigUeKeCL4yciJR5sfgIbMUnKfHXobVRYFzjbDhulEviCl3Uv9ObfHE8bOMOnCzzNYW00ceJSWubU";
+export const STRIPE_PK = "pk_live_51SKOJo2dHVNeNnOnhnFxHcigUeKeCL4yciJR5sfgIbMUnKfHXobVRYFzjbDhulEviCl3Uv9ObfHE8bOMOnCzzNYW00ceJSWubU";
  
 type Recipe = {
   titre: string;
