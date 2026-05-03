@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vercel/node": "^5.7.15",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "stripe": "^22.1.0"
