@@ -10,11 +10,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { plan } = req.body;
+const { plan, priceId: clientPriceId } = req.body;
 
-  const priceId = plan === 'yearly'
-    ? process.env.STRIPE_PRICE_YEARLY
-    : process.env.STRIPE_PRICE_MONTHLY;
+const priceId = clientPriceId || (plan === 'yearly'
+  ? process.env.STRIPE_PRICE_YEARLY
+  : process.env.STRIPE_PRICE_MONTHLY);
 
   if (!priceId) return res.status(400).json({ error: 'Plan invalide' });
 

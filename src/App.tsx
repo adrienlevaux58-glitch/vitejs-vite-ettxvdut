@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+
  
 export const STRIPE_PK = "pk_live_51SKOJo2dHVNeNnOnhnFxHcigUeKeCL4yciJR5sfgIbMUnKfHXobVRYFzjbDhulEviCl3Uv9ObfHE8bOMOnCzzNYW00ceJSWubU";
  
@@ -78,21 +79,26 @@ function decodeRecipe(str: string): Recipe | null {
 function PremiumPage({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState<"monthly" | "yearly" | null>(null);
  
-  const subscribe = async (plan: "monthly" | "yearly") => {
-    setLoading(plan);
-    try {
-      const res = await fetch("/api/create-checkout", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ plan }),
-      });
-      const data = await res.json();
-      if (data.url) window.location.href = data.url;
-    } catch (e) {
-      alert("Erreur lors de la connexion à Stripe. Réessaie.");
-    }
-    setLoading(null);
-  };
+const subscribe = async (plan: "monthly" | "yearly") => {
+  setLoading(plan);
+  try {
+    const priceId = plan === "yearly"
+      ? "price_TON_PRICE_ID_ANNUEL"
+      : "price_TON_PRICE_ID_MENSUEL";
+
+    const res = await fetch("/api/create-checkout", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ plan, priceId }),
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else throw new Error(data.error);
+  } catch (e: any) {
+    alert("Erreur : " + e.message);
+  }
+  setLoading(null);
+};
  
   return (
     <div style={{ position: "fixed" as const, inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 200, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={onClose}>
