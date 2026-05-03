@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-    apiVersion: '2023-10-16',
+  apiVersion: '2023-10-16',
 });
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -24,9 +24,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       success_url: `${req.headers.origin}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin}/?canceled=true`,
     });
-
     return res.status(200).json({ url: session.url });
   } catch (e: any) {
-    return res.status(500).json({ error: e.message });
+    console.error('Stripe error:', e.message, e.type, e.code);
+    return res.status(500).json({ error: e.message, type: e.type });
   }
 }
