@@ -1,22 +1,22 @@
 {
-    "name": "PetitChef",
-    "short_name": "PetitChef",
-    "description": "Recettes personnalisées par IA",
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#f9f7f4",
-    "theme_color": "#C97D4E",
-    "orientation": "portrait",
-    "icons": [
-      {
-        "src": "/icon-192.png",
-        "sizes": "192x192",
-        "type": "image/png"
-      },
-      {
-        "src": "/icon-512.png",
-        "sizes": "512x512",
-        "type": "image/png"
-      }
-    ]
-  }
+  "name": "PetitChef",
+  "short_name": "PetitChef",
+  "description": "Recettes personnalisées par IA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9f7f4",
+  "theme_color": "#C97D4E",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
