@@ -5,10 +5,14 @@ import type { User } from "@supabase/supabase-js";
 export const STRIPE_MONTHLY_URL = "https://buy.stripe.com/eVqfZa04h8hzcHR6278Zq01";
 export const STRIPE_YEARLY_URL = "https://buy.stripe.com/fZu9AMcR369razJ2PV8Zq02";
 
-const SAGE = "#3B6D11";
-const SAGE_LIGHT = "#F0F7EB";
-const SAGE_MID = "#C0DD97";
-const CREAM = "#FAFAF7";
+const SAGE = "#2D5A16";
+const SAGE_LIGHT = "#EBF4E3";
+const SAGE_MID = "#B5D98F";
+const CREAM = "#FAFAF6";
+const BORDER = "#EEEAE2";
+
+const FONT_SERIF = "'Playfair Display', Georgia, serif";
+const FONT_SANS = "'DM Sans', system-ui, sans-serif";
 
 type Recipe = {
   titre: string;
@@ -75,6 +79,12 @@ function decodeRecipe(str: string): Recipe | null {
   try { return JSON.parse(decodeURIComponent(atob(str))); } catch { return null; }
 }
 
+// ---- GOOGLE FONTS ----
+const fontsLink = document.createElement("link");
+fontsLink.href = "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap";
+fontsLink.rel = "stylesheet";
+document.head.appendChild(fontsLink);
+
 // ---- AUTH MODAL ----
 function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (user: User) => void }) {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -104,47 +114,45 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (us
         if (error) throw error;
         if (data.user) onSuccess(data.user);
       }
-    } catch (e: any) {
-      setError(e.message);
-    }
+    } catch (e: any) { setError(e.message); }
     setLoading(false);
   };
 
   return (
-    <div style={{ position: "fixed" as const, inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 20px" }} onClick={onClose}>
-      <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 380, padding: "2rem", boxShadow: "0 20px 60px rgba(0,0,0,0.15)" }} onClick={(e) => e.stopPropagation()}>
+    <div style={{ position: "fixed" as const, inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 20px" }} onClick={onClose}>
+      <div style={{ background: "#fff", borderRadius: 18, width: "100%", maxWidth: 380, padding: "1.75rem", boxShadow: "0 20px 60px rgba(0,0,0,0.12)" }} onClick={(e) => e.stopPropagation()}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-          <div style={{ fontSize: 18, fontWeight: 500, color: "var(--color-text-primary)" }}>
+          <div style={{ fontFamily: FONT_SERIF, fontSize: 20, color: "#1a1a18", fontWeight: 400 }}>
             {mode === "login" ? "Connexion" : "Créer un compte"}
           </div>
-          <button onClick={onClose} style={{ width: 28, height: 28, borderRadius: "50%", border: "0.5px solid var(--color-border-tertiary)", background: "#fafafa", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: "var(--color-text-secondary)" }}>×</button>
+          <button onClick={onClose} style={{ width: 28, height: 28, borderRadius: "50%", border: `0.5px solid ${BORDER}`, background: CREAM, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: "#888" }}>×</button>
         </div>
 
         {message ? (
-          <div style={{ padding: "1rem", background: SAGE_LIGHT, borderRadius: 10, fontSize: 13, color: SAGE, textAlign: "center" }}>{message}</div>
+          <div style={{ padding: "1rem", background: SAGE_LIGHT, borderRadius: 10, fontSize: 13, color: SAGE, textAlign: "center", fontFamily: FONT_SANS }}>{message}</div>
         ) : (
           <>
-            <button onClick={handleGoogle} style={{ width: "100%", height: 42, borderRadius: 10, border: "0.5px solid var(--color-border-secondary)", background: "#fff", fontSize: 13, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 16, color: "var(--color-text-primary)" }}>
+            <button onClick={handleGoogle} style={{ width: "100%", height: 42, borderRadius: 10, border: `0.5px solid ${BORDER}`, background: "#fff", fontSize: 13, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 14, color: "#1a1a18", fontFamily: FONT_SANS }}>
               <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
               Continuer avec Google
             </button>
 
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-              <div style={{ flex: 1, height: 0.5, background: "var(--color-border-tertiary)" }} />
-              <span style={{ fontSize: 11, color: "var(--color-text-tertiary)" }}>ou</span>
-              <div style={{ flex: 1, height: 0.5, background: "var(--color-border-tertiary)" }} />
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+              <div style={{ flex: 1, height: 0.5, background: BORDER }} />
+              <span style={{ fontSize: 11, color: "#bbb", fontFamily: FONT_SANS }}>ou</span>
+              <div style={{ flex: 1, height: 0.5, background: BORDER }} />
             </div>
 
-            <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" style={{ width: "100%", height: 42, padding: "0 14px", borderRadius: 10, border: "0.5px solid var(--color-border-secondary)", fontSize: 13, marginBottom: 8, background: CREAM, outline: "none", boxSizing: "border-box" as const }} />
-            <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mot de passe" type="password" style={{ width: "100%", height: 42, padding: "0 14px", borderRadius: 10, border: "0.5px solid var(--color-border-secondary)", fontSize: 13, marginBottom: 12, background: CREAM, outline: "none", boxSizing: "border-box" as const }} onKeyDown={(e) => e.key === "Enter" && handleEmail()} />
+            <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" style={{ width: "100%", height: 42, padding: "0 14px", borderRadius: 10, border: `0.5px solid ${BORDER}`, fontSize: 13, marginBottom: 8, background: CREAM, outline: "none", boxSizing: "border-box" as const, fontFamily: FONT_SANS }} />
+            <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mot de passe" type="password" style={{ width: "100%", height: 42, padding: "0 14px", borderRadius: 10, border: `0.5px solid ${BORDER}`, fontSize: 13, marginBottom: 12, background: CREAM, outline: "none", boxSizing: "border-box" as const, fontFamily: FONT_SANS }} onKeyDown={(e) => e.key === "Enter" && handleEmail()} />
 
-            {error && <div style={{ fontSize: 12, color: "#dc2626", marginBottom: 10 }}>{error}</div>}
+            {error && <div style={{ fontSize: 12, color: "#dc2626", marginBottom: 10, fontFamily: FONT_SANS }}>{error}</div>}
 
-            <button onClick={handleEmail} disabled={loading} style={{ width: "100%", height: 42, borderRadius: 10, border: "none", background: "#1a1a1a", color: "#fff", fontSize: 13, fontWeight: 500, cursor: "pointer", marginBottom: 12, opacity: loading ? 0.7 : 1 }}>
+            <button onClick={handleEmail} disabled={loading} style={{ width: "100%", height: 42, borderRadius: 10, border: "none", background: "#1a1a18", color: "#fff", fontSize: 13, fontWeight: 500, cursor: "pointer", marginBottom: 12, opacity: loading ? 0.7 : 1, fontFamily: FONT_SANS }}>
               {loading ? "…" : mode === "login" ? "Se connecter" : "Créer mon compte"}
             </button>
 
-            <div style={{ textAlign: "center", fontSize: 12, color: "var(--color-text-secondary)" }}>
+            <div style={{ textAlign: "center", fontSize: 12, color: "#888", fontFamily: FONT_SANS }}>
               {mode === "login" ? "Pas encore de compte ?" : "Déjà un compte ?"}{" "}
               <span onClick={() => { setMode(mode === "login" ? "signup" : "login"); setError(null); }} style={{ color: SAGE, cursor: "pointer", fontWeight: 500 }}>
                 {mode === "login" ? "S'inscrire" : "Se connecter"}
@@ -164,13 +172,13 @@ function PremiumPage({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div style={{ position: "fixed" as const, inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 200, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={onClose}>
+    <div style={{ position: "fixed" as const, inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 200, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={onClose}>
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", width: "100%", maxWidth: 640, maxHeight: "90vh", overflowY: "auto" as const }} onClick={(e) => e.stopPropagation()}>
-        <div style={{ background: "#1a1a1a", padding: "2rem 1.5rem 1.5rem", position: "relative" as const }}>
-          <button onClick={onClose} style={{ position: "absolute" as const, top: 16, right: 16, width: 32, height: 32, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.1)", color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
-          <div style={{ fontSize: 11, color: SAGE_MID, letterSpacing: "1px", textTransform: "uppercase" as const, marginBottom: 8, fontWeight: 500 }}>PetitChef Premium</div>
-          <div style={{ fontSize: 22, fontWeight: 500, color: "#fff", marginBottom: 4, letterSpacing: "-0.3px" }}>Cuisine sans limites</div>
-          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.6)" }}>Tout ce dont tu as besoin pour bien manger</div>
+        <div style={{ background: "#1a1a18", padding: "2rem 1.5rem 1.5rem", position: "relative" as const }}>
+          <button onClick={onClose} style={{ position: "absolute" as const, top: 16, right: 16, width: 30, height: 30, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.1)", color: "#fff", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
+          <div style={{ fontSize: 10, color: SAGE_MID, letterSpacing: "2px", textTransform: "uppercase" as const, marginBottom: 8, fontWeight: 500, fontFamily: FONT_SANS }}>PetitChef Premium</div>
+          <div style={{ fontFamily: FONT_SERIF, fontSize: 24, fontWeight: 400, color: "#fff", marginBottom: 4, fontStyle: "italic" }}>Cuisine sans limites</div>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", fontFamily: FONT_SANS }}>Tout ce dont tu as besoin pour bien manger</div>
         </div>
 
         <div style={{ padding: "1.5rem" }}>
@@ -185,30 +193,30 @@ function PremiumPage({ onClose }: { onClose: () => void }) {
               <div key={i} style={{ display: "flex", gap: 12, marginBottom: 14, alignItems: "center" }}>
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: SAGE_LIGHT, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{f.icon}</div>
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 500, color: "var(--color-text-primary)" }}>{f.title}</div>
-                  <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{f.desc}</div>
+                  <div style={{ fontSize: 14, fontWeight: 500, color: "#1a1a18", fontFamily: FONT_SANS }}>{f.title}</div>
+                  <div style={{ fontSize: 12, color: "#888", fontFamily: FONT_SANS }}>{f.desc}</div>
                 </div>
               </div>
             ))}
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: "1.25rem" }}>
-            <div style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: 14, padding: "1.25rem", textAlign: "center" as const }}>
-              <div style={{ fontSize: 11, fontWeight: 500, color: "var(--color-text-tertiary)", letterSpacing: "1px", textTransform: "uppercase" as const, marginBottom: 8 }}>Mensuel</div>
-              <div style={{ fontSize: 26, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 2 }}>4.99€</div>
-              <div style={{ fontSize: 11, color: "var(--color-text-tertiary)", marginBottom: 14 }}>par mois</div>
-              <button onClick={() => subscribe("monthly")} style={{ width: "100%", height: 38, borderRadius: 8, border: "0.5px solid #1a1a1a", background: "#fff", color: "#1a1a1a", fontSize: 13, fontWeight: 500, cursor: "pointer" }}>Choisir</button>
+            <div style={{ border: `0.5px solid ${BORDER}`, borderRadius: 14, padding: "1.25rem", textAlign: "center" as const }}>
+              <div style={{ fontSize: 10, fontWeight: 500, color: "#bbb", letterSpacing: "1px", textTransform: "uppercase" as const, marginBottom: 8, fontFamily: FONT_SANS }}>Mensuel</div>
+              <div style={{ fontFamily: FONT_SERIF, fontSize: 28, color: "#1a1a18", marginBottom: 2, fontWeight: 400 }}>4.99€</div>
+              <div style={{ fontSize: 11, color: "#bbb", marginBottom: 14, fontFamily: FONT_SANS }}>par mois</div>
+              <button onClick={() => subscribe("monthly")} style={{ width: "100%", height: 38, borderRadius: 8, border: "0.5px solid #1a1a18", background: "#fff", color: "#1a1a18", fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: FONT_SANS }}>Choisir</button>
             </div>
-            <div style={{ border: "1.5px solid #1a1a1a", borderRadius: 14, padding: "1.25rem", textAlign: "center" as const, position: "relative" as const }}>
-              <div style={{ position: "absolute" as const, top: -10, left: "50%", transform: "translateX(-50%)", background: "#1a1a1a", color: "#fff", fontSize: 10, fontWeight: 500, padding: "3px 10px", borderRadius: 999, whiteSpace: "nowrap" as const }}>Économisez 33%</div>
-              <div style={{ fontSize: 11, fontWeight: 500, color: "var(--color-text-tertiary)", letterSpacing: "1px", textTransform: "uppercase" as const, marginBottom: 8 }}>Annuel</div>
-              <div style={{ fontSize: 26, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 2 }}>39.99€</div>
-              <div style={{ fontSize: 11, color: "var(--color-text-tertiary)", marginBottom: 14 }}>par an · 3.33€/mois</div>
-              <button onClick={() => subscribe("yearly")} style={{ width: "100%", height: 38, borderRadius: 8, border: "none", background: "#1a1a1a", color: "#fff", fontSize: 13, fontWeight: 500, cursor: "pointer" }}>Choisir</button>
+            <div style={{ border: "1.5px solid #1a1a18", borderRadius: 14, padding: "1.25rem", textAlign: "center" as const, position: "relative" as const }}>
+              <div style={{ position: "absolute" as const, top: -10, left: "50%", transform: "translateX(-50%)", background: "#1a1a18", color: "#fff", fontSize: 9, fontWeight: 500, padding: "3px 10px", borderRadius: 999, whiteSpace: "nowrap" as const, fontFamily: FONT_SANS }}>Économisez 33%</div>
+              <div style={{ fontSize: 10, fontWeight: 500, color: "#888", letterSpacing: "1px", textTransform: "uppercase" as const, marginBottom: 8, fontFamily: FONT_SANS }}>Annuel</div>
+              <div style={{ fontFamily: FONT_SERIF, fontSize: 28, color: "#1a1a18", marginBottom: 2, fontWeight: 400 }}>39.99€</div>
+              <div style={{ fontSize: 11, color: "#bbb", marginBottom: 14, fontFamily: FONT_SANS }}>par an · 3.33€/mois</div>
+              <button onClick={() => subscribe("yearly")} style={{ width: "100%", height: 38, borderRadius: 8, border: "none", background: "#1a1a18", color: "#fff", fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: FONT_SANS }}>Choisir</button>
             </div>
           </div>
 
-          <div style={{ fontSize: 11, color: "var(--color-text-tertiary)", textAlign: "center" as const }}>
+          <div style={{ fontSize: 11, color: "#bbb", textAlign: "center" as const, fontFamily: FONT_SANS }}>
             Paiement sécurisé par Stripe · Annulable à tout moment
           </div>
         </div>
@@ -221,10 +229,10 @@ function PremiumPage({ onClose }: { onClose: () => void }) {
 function LimitBanner({ type, onUpgrade }: { type: "searches" | "favs"; onUpgrade: () => void }) {
   return (
     <div style={{ background: SAGE_LIGHT, border: `0.5px solid ${SAGE_MID}`, borderRadius: 10, padding: "0.875rem 1rem", marginBottom: 14, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-      <div style={{ fontSize: 13, color: "#27500A" }}>
+      <div style={{ fontSize: 13, color: "#27500A", fontFamily: FONT_SANS }}>
         {type === "searches" ? "3 recherches gratuites utilisées aujourd'hui." : "1 favori gratuit utilisé aujourd'hui."} Passe Premium pour continuer.
       </div>
-      <button onClick={onUpgrade} style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: SAGE, color: "#fff", fontSize: 12, fontWeight: 500, cursor: "pointer", whiteSpace: "nowrap" as const }}>Premium →</button>
+      <button onClick={onUpgrade} style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: SAGE, color: "#fff", fontSize: 12, fontWeight: 500, cursor: "pointer", whiteSpace: "nowrap" as const, fontFamily: FONT_SANS }}>Premium →</button>
     </div>
   );
 }
@@ -237,47 +245,64 @@ function ShoppingList({ plan }: { plan: MealPlan }) {
     const slot = plan[day]?.[meal];
     if (slot) slot.recipe.ingredients.forEach((ing) => { if (!allIngredients.includes(ing)) allIngredients.push(ing); });
   }));
+
   const toggle = (ing: string) => setChecked((prev) => ({ ...prev, [ing]: !prev[ing] }));
   const unchecked = allIngredients.filter((i) => !checked[i]);
   const done = allIngredients.filter((i) => checked[i]);
 
   if (allIngredients.length === 0) return (
-    <div style={{ textAlign: "center", padding: "2rem", color: "var(--color-text-tertiary)", fontSize: 13 }}>
+    <div style={{ textAlign: "center", padding: "2rem", color: "#bbb", fontSize: 13, fontFamily: FONT_SANS }}>
       Ajoute des recettes au planning pour générer ta liste
     </div>
   );
 
   return (
-    <div style={{ background: "#fff", borderRadius: 12, border: "0.5px solid var(--color-border-tertiary)", overflow: "hidden" }}>
-      <div style={{ padding: "0.875rem 1rem", borderBottom: "0.5px solid var(--color-border-tertiary)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
         <div>
-          <div style={{ fontSize: 14, fontWeight: 500, color: "var(--color-text-primary)" }}>Liste de courses</div>
-          <div style={{ fontSize: 11, color: "var(--color-text-tertiary)" }}>{unchecked.length} restant · {done.length} fait</div>
+          <div style={{ fontFamily: FONT_SERIF, fontSize: 18, color: "#1a1a18", fontWeight: 400, marginBottom: 2 }}>Liste de courses</div>
+          <div style={{ fontSize: 11, color: "#bbb", fontFamily: FONT_SANS }}>{allIngredients.length} articles · {done.length} fait{done.length > 1 ? "s" : ""}</div>
         </div>
-        <div style={{ height: 4, width: 80, background: "var(--color-border-tertiary)", borderRadius: 999, overflow: "hidden" }}>
-          <div style={{ height: "100%", width: `${allIngredients.length ? (done.length / allIngredients.length) * 100 : 0}%`, background: SAGE, borderRadius: 999 }} />
+        {done.length > 0 && (
+          <button onClick={() => setChecked({})} style={{ fontSize: 11, color: "#bbb", background: "none", border: "none", cursor: "pointer", fontFamily: FONT_SANS }}>Tout décocher</button>
+        )}
+      </div>
+
+      {/* Progress */}
+      <div style={{ marginBottom: 16 }}>
+        <div style={{ height: 3, background: BORDER, borderRadius: 999, overflow: "hidden", marginBottom: 5 }}>
+          <div style={{ height: "100%", width: `${allIngredients.length ? (done.length / allIngredients.length) * 100 : 0}%`, background: SAGE, borderRadius: 999, transition: "width 0.3s" }} />
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "#bbb", fontFamily: FONT_SANS }}>
+          <span>{done.length} / {allIngredients.length} faits</span>
+          <span>{allIngredients.length ? Math.round((done.length / allIngredients.length) * 100) : 0}%</span>
         </div>
       </div>
-      {unchecked.map((ing, i) => (
-        <div key={i} onClick={() => toggle(ing)} style={{ padding: "0.75rem 1rem", display: "flex", alignItems: "center", gap: 10, cursor: "pointer", borderBottom: "0.5px solid var(--color-border-tertiary)" }}>
-          <div style={{ width: 18, height: 18, borderRadius: 5, border: "0.5px solid var(--color-border-secondary)", flexShrink: 0 }} />
-          <span style={{ fontSize: 13, color: "var(--color-text-primary)" }}>{ing}</span>
-        </div>
-      ))}
-      {done.map((ing, i) => (
-        <div key={i} onClick={() => toggle(ing)} style={{ padding: "0.75rem 1rem", display: "flex", alignItems: "center", gap: 10, cursor: "pointer", borderBottom: "0.5px solid var(--color-border-tertiary)", opacity: 0.4 }}>
-          <div style={{ width: 18, height: 18, borderRadius: 5, border: `0.5px solid ${SAGE}`, background: SAGE, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ color: "#fff", fontSize: 10 }}>✓</span>
+
+      {/* Items */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {unchecked.map((ing, i) => (
+          <div key={i} onClick={() => toggle(ing)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", background: "#fff", borderRadius: 10, border: `0.5px solid ${BORDER}`, cursor: "pointer" }}>
+            <div style={{ width: 18, height: 18, borderRadius: 5, border: `0.5px solid #D4CFC4`, background: "#fff", flexShrink: 0 }} />
+            <span style={{ fontSize: 13, color: "#1a1a18", fontFamily: FONT_SANS }}>{ing}</span>
           </div>
-          <span style={{ fontSize: 13, color: "var(--color-text-primary)", textDecoration: "line-through" }}>{ing}</span>
-        </div>
-      ))}
+        ))}
+        {done.map((ing, i) => (
+          <div key={i} onClick={() => toggle(ing)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", background: "#fff", borderRadius: 10, border: `0.5px solid ${BORDER}`, cursor: "pointer", opacity: 0.4 }}>
+            <div style={{ width: 18, height: 18, borderRadius: 5, border: `0.5px solid ${SAGE}`, background: SAGE, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ color: "#fff", fontSize: 10 }}>✓</span>
+            </div>
+            <span style={{ fontSize: 13, color: "#1a1a18", textDecoration: "line-through", fontFamily: FONT_SANS }}>{ing}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-// ---- RECIPE DETAIL MODAL ----
-function RecipeModal({ recipe, onClose, plan, setPlan, onFavLimited, user }: {
+// ---- RECIPE MODAL ----
+function RecipeModal({ recipe, onClose, plan, setPlan, onFavLimited }: {
   recipe: Recipe; onClose: () => void;
   plan: MealPlan; setPlan: (p: MealPlan) => void;
   onFavLimited: () => void; user: User | null;
@@ -296,6 +321,11 @@ function RecipeModal({ recipe, onClose, plan, setPlan, onFavLimited, user }: {
 
   const scaledIngredients = recipe.ingredients.map((ing) => scaleIngredient(ing, basePersonnes, personnes));
 
+  useEffect(() => {
+    const favs: Recipe[] = JSON.parse(localStorage.getItem("favs") || "[]");
+    setFav(favs.some((f) => f.titre === recipe.titre));
+  }, []);
+
   const toggleFav = async () => {
     if (!isPremiumLocal()) {
       const usage = getUsage();
@@ -309,10 +339,6 @@ function RecipeModal({ recipe, onClose, plan, setPlan, onFavLimited, user }: {
       if (idx > -1) favs.splice(idx, 1);
     } else {
       favs.unshift({ ...recipe, personnes });
-      if (user) {
-        const { data } = await supabase.from("favorites").select("id").eq("user_id", user.id).limit(1);
-        if (!data?.length) await supabase.from("favorites").insert({ user_id: user.id, recipe: { ...recipe, personnes } });
-      }
     }
     localStorage.setItem("favs", JSON.stringify(favs));
     setFav(!fav);
@@ -344,104 +370,96 @@ function RecipeModal({ recipe, onClose, plan, setPlan, onFavLimited, user }: {
   };
 
   const share = () => {
-    const encoded = encodeRecipe(recipe);
-    const url = `${window.location.origin}?recette=${encoded}`;
+    const url = `${window.location.origin}?recette=${encodeRecipe(recipe)}`;
     navigator.clipboard.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
   };
 
   const diffColors: Record<string, string> = { "Facile": SAGE, "Moyen": "#BA7517", "Difficile": "#dc2626" };
 
-  useEffect(() => {
-    const favs: Recipe[] = JSON.parse(localStorage.getItem("favs") || "[]");
-    setFav(favs.some((f) => f.titre === recipe.titre));
-  }, []);
-
   return (
-    <div style={{ position: "fixed" as const, inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 150, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={onClose}>
+    <div style={{ position: "fixed" as const, inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 150, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={onClose}>
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", width: "100%", maxWidth: 640, maxHeight: "92vh", overflowY: "auto" as const }} onClick={(e) => e.stopPropagation()}>
 
-        {/* Image */}
         <div style={{ position: "relative" as const }}>
-          <img src={recipe.image || getUnsplashUrl(recipe.titre)} alt={recipe.titre} style={{ width: "100%", height: 220, objectFit: "cover", display: "block" }} onError={(e) => { (e.target as HTMLImageElement).src = `https://source.unsplash.com/800x500/?food`; }} />
-          <button onClick={onClose} style={{ position: "absolute" as const, top: 14, right: 14, width: 32, height: 32, borderRadius: "50%", border: "none", background: "rgba(0,0,0,0.4)", color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
+          <img src={recipe.image || getUnsplashUrl(recipe.titre)} alt={recipe.titre} style={{ width: "100%", height: 220, objectFit: "cover", display: "block" }} onError={(e) => { (e.target as HTMLImageElement).src = `https://source.unsplash.com/800x500/?food,cooking`; }} />
+          <button onClick={onClose} style={{ position: "absolute" as const, top: 14, right: 14, width: 32, height: 32, borderRadius: "50%", border: "none", background: "rgba(0,0,0,0.35)", color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
         </div>
 
         <div style={{ padding: "1.25rem 1.5rem" }}>
-          <div style={{ fontSize: 11, color: SAGE, letterSpacing: "0.8px", textTransform: "uppercase" as const, marginBottom: 4, fontWeight: 500 }}>Recette</div>
-          <div style={{ fontSize: 20, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 10, letterSpacing: "-0.3px" }}>{recipe.titre}</div>
+          <div style={{ fontSize: 10, color: SAGE, letterSpacing: "1.5px", textTransform: "uppercase" as const, marginBottom: 6, fontWeight: 500, fontFamily: FONT_SANS }}>Recette</div>
+          <div style={{ fontFamily: FONT_SERIF, fontSize: 22, color: "#1a1a18", marginBottom: 10, fontWeight: 400, lineHeight: 1.2 }}>{recipe.titre}</div>
 
           <div style={{ display: "flex", gap: 14, marginBottom: 16 }}>
-            <span style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>⏱ {recipe.temps}</span>
-            <span style={{ fontSize: 12, color: diffColors[recipe.difficulte] || "var(--color-text-secondary)", fontWeight: 500 }}>● {recipe.difficulte}</span>
-            {recipe.calories && <span style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>🔥 {recipe.calories}</span>}
+            <span style={{ fontSize: 12, color: "#888", fontFamily: FONT_SANS }}>⏱ {recipe.temps}</span>
+            <span style={{ fontSize: 12, color: diffColors[recipe.difficulte] || "#888", fontWeight: 500, fontFamily: FONT_SANS }}>● {recipe.difficulte}</span>
+            {recipe.calories && <span style={{ fontSize: 12, color: "#888", fontFamily: FONT_SANS }}>🔥 {recipe.calories}</span>}
           </div>
 
           {/* Serving selector */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, padding: "0.75rem 1rem", background: CREAM, borderRadius: 10 }}>
-            <span style={{ fontSize: 12, color: "var(--color-text-secondary)", flex: 1 }}>Personnes</span>
-            <div style={{ display: "flex", alignItems: "center", gap: 0, border: "0.5px solid var(--color-border-secondary)", borderRadius: 999, overflow: "hidden" }}>
-              <button onClick={() => setPersonnes(Math.max(1, personnes - 1))} style={{ width: 28, height: 28, border: "none", background: "#fff", cursor: "pointer", fontSize: 14, color: "var(--color-text-primary)" }}>−</button>
-              <span style={{ minWidth: 24, textAlign: "center", fontSize: 13, fontWeight: 500, color: SAGE }}>{personnes}</span>
-              <button onClick={() => setPersonnes(Math.min(12, personnes + 1))} style={{ width: 28, height: 28, border: "none", background: "#fff", cursor: "pointer", fontSize: 14, color: "var(--color-text-primary)" }}>+</button>
+            <span style={{ fontSize: 12, color: "#888", flex: 1, fontFamily: FONT_SANS }}>Personnes</span>
+            <div style={{ display: "flex", alignItems: "center", border: `0.5px solid ${BORDER}`, borderRadius: 999, overflow: "hidden" }}>
+              <button onClick={() => setPersonnes(Math.max(1, personnes - 1))} style={{ width: 28, height: 28, border: "none", background: "#fff", cursor: "pointer", fontSize: 14, color: "#1a1a18", fontFamily: FONT_SANS }}>−</button>
+              <span style={{ minWidth: 24, textAlign: "center", fontSize: 13, fontWeight: 500, color: SAGE, fontFamily: FONT_SANS }}>{personnes}</span>
+              <button onClick={() => setPersonnes(Math.min(12, personnes + 1))} style={{ width: 28, height: 28, border: "none", background: "#fff", cursor: "pointer", fontSize: 14, color: "#1a1a18", fontFamily: FONT_SANS }}>+</button>
             </div>
           </div>
 
-          {/* Content grid */}
+          {/* Content */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", marginBottom: 16 }}>
             <div>
-              <div style={{ fontSize: 11, fontWeight: 500, color: "var(--color-text-tertiary)", textTransform: "uppercase" as const, letterSpacing: "0.8px", marginBottom: 8 }}>Ingrédients</div>
+              <div style={{ fontSize: 10, fontWeight: 500, color: "#bbb", textTransform: "uppercase" as const, letterSpacing: "1px", marginBottom: 8, fontFamily: FONT_SANS }}>Ingrédients</div>
               {scaledIngredients.map((ing, i) => (
-                <div key={i} style={{ fontSize: 13, color: "var(--color-text-primary)", padding: "4px 0", borderBottom: "0.5px solid var(--color-border-tertiary)", display: "flex", gap: 6 }}>
+                <div key={i} style={{ fontSize: 13, color: "#1a1a18", padding: "4px 0", borderBottom: `0.5px solid ${BORDER}`, display: "flex", gap: 6, fontFamily: FONT_SANS }}>
                   <span style={{ color: SAGE, flexShrink: 0 }}>·</span>{ing}
                 </div>
               ))}
             </div>
             <div>
-              <div style={{ fontSize: 11, fontWeight: 500, color: "var(--color-text-tertiary)", textTransform: "uppercase" as const, letterSpacing: "0.8px", marginBottom: 8 }}>Préparation</div>
+              <div style={{ fontSize: 10, fontWeight: 500, color: "#bbb", textTransform: "uppercase" as const, letterSpacing: "1px", marginBottom: 8, fontFamily: FONT_SANS }}>Préparation</div>
               {recipe.etapes.map((step, i) => (
                 <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-                  <div style={{ width: 18, height: 18, borderRadius: "50%", background: SAGE_LIGHT, color: SAGE, fontSize: 10, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>{i + 1}</div>
-                  <div style={{ fontSize: 12, color: "var(--color-text-secondary)", lineHeight: 1.5 }}>{step}</div>
+                  <div style={{ width: 18, height: 18, borderRadius: "50%", background: SAGE_LIGHT, color: SAGE, fontSize: 9, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1, fontFamily: FONT_SANS }}>{i + 1}</div>
+                  <div style={{ fontSize: 12, color: "#666", lineHeight: 1.5, fontFamily: FONT_SANS }}>{step}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Actions */}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" as const }}>
-            <button onClick={toggleFav} style={{ height: 38, padding: "0 14px", borderRadius: 8, border: `0.5px solid ${fav ? SAGE : "var(--color-border-tertiary)"}`, background: fav ? SAGE_LIGHT : "#fff", color: fav ? SAGE : "var(--color-text-secondary)", fontSize: 12, cursor: "pointer", fontWeight: 500 }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" as const, marginBottom: planOpen ? 12 : 0 }}>
+            <button onClick={toggleFav} style={{ height: 36, padding: "0 14px", borderRadius: 8, border: `0.5px solid ${fav ? SAGE : BORDER}`, background: fav ? SAGE_LIGHT : "#fff", color: fav ? SAGE : "#888", fontSize: 12, cursor: "pointer", fontFamily: FONT_SANS }}>
               {fav ? "♥ Sauvegardé" : "♡ Favoris"}
             </button>
-            <button onClick={share} style={{ height: 38, padding: "0 14px", borderRadius: 8, border: "0.5px solid var(--color-border-tertiary)", background: "#fff", color: "var(--color-text-secondary)", fontSize: 12, cursor: "pointer" }}>
+            <button onClick={share} style={{ height: 36, padding: "0 14px", borderRadius: 8, border: `0.5px solid ${BORDER}`, background: "#fff", color: "#888", fontSize: 12, cursor: "pointer", fontFamily: FONT_SANS }}>
               {copied ? "✓ Copié" : "⎘ Partager"}
             </button>
-            <button onClick={() => setPlanOpen(!planOpen)} style={{ height: 38, padding: "0 14px", borderRadius: 8, border: "0.5px solid var(--color-border-tertiary)", background: "#fff", color: "var(--color-text-secondary)", fontSize: 12, cursor: "pointer" }}>
+            <button onClick={() => setPlanOpen(!planOpen)} style={{ height: 36, padding: "0 14px", borderRadius: 8, border: `0.5px solid ${BORDER}`, background: "#fff", color: "#888", fontSize: 12, cursor: "pointer", fontFamily: FONT_SANS }}>
               📅 Planifier
             </button>
-            <button onClick={startTimer} style={{ height: 38, padding: "0 14px", borderRadius: 8, border: `0.5px solid ${timerActive ? SAGE : "var(--color-border-tertiary)"}`, background: timerActive ? SAGE : "#fff", color: timerActive ? "#fff" : "var(--color-text-secondary)", fontSize: 12, cursor: "pointer", marginLeft: "auto" }}>
+            <button onClick={startTimer} style={{ height: 36, padding: "0 14px", borderRadius: 8, border: `0.5px solid ${timerActive ? SAGE : BORDER}`, background: timerActive ? SAGE : "#fff", color: timerActive ? "#fff" : "#888", fontSize: 12, cursor: "pointer", marginLeft: "auto", fontFamily: FONT_SANS }}>
               {timerActive ? `⏹ ${timerDisplay}` : `▶ ${parseInt(recipe.temps) || 20} min`}
             </button>
           </div>
 
-          {/* Plan selector */}
           {planOpen && (
-            <div style={{ marginTop: 12, padding: "1rem", background: CREAM, borderRadius: 10 }}>
-              <div style={{ fontSize: 12, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 10 }}>Ajouter au planning</div>
+            <div style={{ padding: "1rem", background: CREAM, borderRadius: 10, marginTop: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 500, color: "#1a1a18", marginBottom: 10, fontFamily: FONT_SANS }}>Ajouter au planning</div>
               <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 5, marginBottom: 8 }}>
                 {DAYS.map((d) => (
-                  <button key={d} onClick={() => setSelectedDay(d)} style={{ padding: "3px 10px", borderRadius: 999, border: `0.5px solid ${selectedDay === d ? SAGE : "var(--color-border-tertiary)"}`, fontSize: 11, color: selectedDay === d ? SAGE : "var(--color-text-secondary)", background: selectedDay === d ? SAGE_LIGHT : "#fff", cursor: "pointer", fontWeight: selectedDay === d ? 500 : 400 }}>
+                  <button key={d} onClick={() => setSelectedDay(d)} style={{ padding: "3px 10px", borderRadius: 999, border: `0.5px solid ${selectedDay === d ? SAGE : BORDER}`, fontSize: 11, color: selectedDay === d ? SAGE : "#888", background: selectedDay === d ? SAGE_LIGHT : "#fff", cursor: "pointer", fontFamily: FONT_SANS }}>
                     {d.slice(0, 3)}
                   </button>
                 ))}
               </div>
               <div style={{ display: "flex", gap: 5, marginBottom: 10 }}>
                 {MEALS.map((m) => (
-                  <button key={m} onClick={() => setSelectedMeal(m)} style={{ flex: 1, height: 32, borderRadius: 8, border: `0.5px solid ${selectedMeal === m ? SAGE : "var(--color-border-tertiary)"}`, fontSize: 11, color: selectedMeal === m ? SAGE : "var(--color-text-secondary)", background: selectedMeal === m ? SAGE_LIGHT : "#fff", cursor: "pointer", fontWeight: selectedMeal === m ? 500 : 400 }}>
+                  <button key={m} onClick={() => setSelectedMeal(m)} style={{ flex: 1, height: 32, borderRadius: 8, border: `0.5px solid ${selectedMeal === m ? SAGE : BORDER}`, fontSize: 11, color: selectedMeal === m ? SAGE : "#888", background: selectedMeal === m ? SAGE_LIGHT : "#fff", cursor: "pointer", fontFamily: FONT_SANS }}>
                     {MEAL_LABELS[m]}
                   </button>
                 ))}
               </div>
-              <button onClick={savePlan} style={{ width: "100%", height: 36, borderRadius: 8, border: "none", background: planSaved ? SAGE : "#1a1a1a", color: "#fff", fontSize: 12, fontWeight: 500, cursor: "pointer" }}>
+              <button onClick={savePlan} style={{ width: "100%", height: 36, borderRadius: 8, border: "none", background: planSaved ? SAGE : "#1a1a18", color: "#fff", fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: FONT_SANS }}>
                 {planSaved ? "✓ Ajouté !" : "Confirmer"}
               </button>
             </div>
@@ -455,20 +473,19 @@ function RecipeModal({ recipe, onClose, plan, setPlan, onFavLimited, user }: {
 // ---- RECIPE CARD ----
 function RecipeCard({ recipe, index, onOpen }: { recipe: Recipe; index: number; onOpen: (r: Recipe) => void }) {
   const diffColors: Record<string, string> = { "Facile": SAGE, "Moyen": "#BA7517", "Difficile": "#dc2626" };
-  const imgUrl = recipe.image || getUnsplashUrl(recipe.titre);
 
   return (
-    <div onClick={() => onOpen(recipe)} style={{ background: "#fff", borderRadius: 12, border: "0.5px solid var(--color-border-tertiary)", overflow: "hidden", cursor: "pointer" }}>
-      <img src={imgUrl} alt={recipe.titre} style={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} onError={(e) => { (e.target as HTMLImageElement).src = `https://source.unsplash.com/800x500/?food`; }} />
-      <div style={{ padding: "12px 14px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 5 }}>
-          <div style={{ fontSize: 10, color: "var(--color-text-tertiary)", letterSpacing: "0.5px" }}>0{index + 1}</div>
+    <div onClick={() => onOpen(recipe)} style={{ background: "#fff", borderRadius: 14, border: `0.5px solid ${BORDER}`, overflow: "hidden", display: "flex", cursor: "pointer", height: 96 }}>
+      <img src={recipe.image || getUnsplashUrl(recipe.titre)} alt={recipe.titre} style={{ width: 96, height: 96, objectFit: "cover", flexShrink: 0, display: "block", background: "#F0EDE5" }} onError={(e) => { (e.target as HTMLImageElement).src = `https://source.unsplash.com/800x500/?food,cooking`; }} />
+      <div style={{ padding: "10px 12px", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+        <div>
+          <div style={{ fontSize: 9, color: "#bbb", letterSpacing: "0.5px", fontFamily: FONT_SANS, marginBottom: 3 }}>0{index + 1}</div>
+          <div style={{ fontFamily: FONT_SERIF, fontSize: 13, color: "#1a1a18", lineHeight: 1.35, fontWeight: 400 }}>{recipe.titre}</div>
         </div>
-        <div style={{ fontSize: 14, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 8, lineHeight: 1.35 }}>{recipe.titre}</div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <span style={{ fontSize: 11, color: "var(--color-text-secondary)" }}>⏱ {recipe.temps}</span>
-          <span style={{ fontSize: 11, color: "var(--color-text-secondary)" }}>🔥 {recipe.calories}</span>
-          <span style={{ fontSize: 11, color: diffColors[recipe.difficulte] || "var(--color-text-secondary)", fontWeight: 500 }}>{recipe.difficulte}</span>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <span style={{ fontSize: 10, color: "#bbb", fontFamily: FONT_SANS }}>⏱ {recipe.temps}</span>
+          <span style={{ fontSize: 10, color: "#bbb", fontFamily: FONT_SANS }}>🔥 {recipe.calories}</span>
+          <span style={{ fontSize: 10, color: diffColors[recipe.difficulte] || "#888", fontWeight: 500, fontFamily: FONT_SANS }}>{recipe.difficulte}</span>
         </div>
       </div>
     </div>
@@ -481,6 +498,7 @@ function MealPlanner({ plan, setPlan, premium, user }: { plan: MealPlan; setPlan
   const [mealLoading, setMealLoading] = useState(false);
   const [mealRecipe, setMealRecipe] = useState<Recipe | null>(null);
   const [openRecipe, setOpenRecipe] = useState<Recipe | null>(null);
+  const [showShopping, setShowShopping] = useState(false);
 
   const removeSlot = (day: string, meal: typeof MEALS[number]) => {
     const newPlan = { ...plan };
@@ -517,41 +535,65 @@ function MealPlanner({ plan, setPlan, premium, user }: { plan: MealPlan; setPlan
 
   return (
     <div>
-      <div style={{ background: "#fff", borderRadius: 12, border: "0.5px solid var(--color-border-tertiary)", padding: "1rem", marginBottom: 12 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: filledCount > 0 ? 10 : 0 }}>
+      {/* Header */}
+      <div style={{ background: "#fff", borderRadius: 12, border: `0.5px solid ${BORDER}`, padding: "1rem", marginBottom: 12 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: filledCount > 0 ? 10 : 0 }}>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 500, color: "var(--color-text-primary)" }}>Planning de la semaine</div>
-            <div style={{ fontSize: 12, color: "var(--color-text-tertiary)" }}>{filledCount === 0 ? "Ajoute des recettes depuis la recherche" : `${filledCount} / 21 repas planifiés`}</div>
+            <div style={{ fontFamily: FONT_SERIF, fontSize: 18, color: "#1a1a18", fontWeight: 400, marginBottom: 2 }}>Planning de la semaine</div>
+            <div style={{ fontSize: 12, color: "#bbb", fontFamily: FONT_SANS }}>{filledCount === 0 ? "Ajoute des recettes depuis la recherche" : `${filledCount} / 21 repas planifiés`}</div>
           </div>
-          {filledCount > 0 && <button onClick={clearPlan} style={{ padding: "5px 12px", borderRadius: 8, border: "0.5px solid #fee2e2", background: "#fff8f6", color: "#dc2626", fontSize: 11, cursor: "pointer" }}>Vider</button>}
+          {filledCount > 0 && (
+            <div style={{ display: "flex", gap: 6 }}>
+              {premium && (
+                <button onClick={() => setShowShopping(!showShopping)} style={{ padding: "5px 12px", borderRadius: 8, border: `0.5px solid ${SAGE_MID}`, background: SAGE_LIGHT, color: SAGE, fontSize: 11, cursor: "pointer", fontFamily: FONT_SANS, fontWeight: 500 }}>
+                  🛒 {showShopping ? "Masquer" : "Courses"}
+                </button>
+              )}
+              <button onClick={clearPlan} style={{ padding: "5px 12px", borderRadius: 8, border: "0.5px solid #fee2e2", background: "#fff8f6", color: "#dc2626", fontSize: 11, cursor: "pointer", fontFamily: FONT_SANS }}>Vider</button>
+            </div>
+          )}
         </div>
         {filledCount > 0 && (
-          <div style={{ height: 3, background: "var(--color-border-tertiary)", borderRadius: 999, overflow: "hidden" }}>
+          <div style={{ height: 3, background: BORDER, borderRadius: 999, overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${(filledCount / 21) * 100}%`, background: SAGE, borderRadius: 999 }} />
           </div>
         )}
       </div>
 
+      {/* Shopping list */}
+      {showShopping && premium && (
+        <div style={{ background: "#fff", borderRadius: 12, border: `0.5px solid ${BORDER}`, padding: "1rem", marginBottom: 12 }}>
+          <ShoppingList plan={plan} />
+        </div>
+      )}
+
+      {!premium && filledCount > 0 && (
+        <div style={{ padding: "0.875rem 1rem", background: SAGE_LIGHT, borderRadius: 10, fontSize: 12, color: "#27500A", textAlign: "center", marginBottom: 12, fontFamily: FONT_SANS }}>
+          🛒 La liste de courses est disponible en Premium
+        </div>
+      )}
+
+      {/* Grid */}
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {DAYS.map((day) => (
-          <div key={day} style={{ background: "#fff", borderRadius: 12, border: "0.5px solid var(--color-border-tertiary)", overflow: "hidden" }}>
-            <div style={{ padding: "8px 14px", borderBottom: "0.5px solid var(--color-border-tertiary)", fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)" }}>{day}</div>
+          <div key={day} style={{ background: "#fff", borderRadius: 12, border: `0.5px solid ${BORDER}`, overflow: "hidden" }}>
+            <div style={{ padding: "8px 14px", borderBottom: `0.5px solid ${BORDER}`, fontSize: 12, fontWeight: 500, color: "#1a1a18", fontFamily: FONT_SANS }}>{day}</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr" }}>
               {MEALS.map((meal, i) => {
                 const slot = plan[day]?.[meal];
                 return (
-                  <div key={meal} style={{ padding: "0.75rem 0.875rem", borderRight: i < 2 ? "0.5px solid var(--color-border-tertiary)" : "none", minHeight: 72 }}>
-                    <div style={{ fontSize: 9, fontWeight: 500, color: "var(--color-text-tertiary)", textTransform: "uppercase" as const, letterSpacing: "0.5px", marginBottom: 5 }}>{MEAL_LABELS[meal]}</div>
+                  <div key={meal} style={{ padding: "0.75rem 0.875rem", borderRight: i < 2 ? `0.5px solid ${BORDER}` : "none", minHeight: 72 }}>
+                    <div style={{ fontSize: 9, fontWeight: 500, color: "#bbb", textTransform: "uppercase" as const, letterSpacing: "0.5px", marginBottom: 5, fontFamily: FONT_SANS }}>{MEAL_LABELS[meal]}</div>
                     {slot ? (
                       <div>
-                        <div onClick={() => setOpenRecipe(slot.recipe)} style={{ fontSize: 12, color: "var(--color-text-primary)", fontWeight: 500, lineHeight: 1.3, cursor: "pointer", marginBottom: 4 }}>{slot.recipe.titre}</div>
+                        <div onClick={() => setOpenRecipe(slot.recipe)} style={{ fontFamily: FONT_SERIF, fontSize: 12, color: "#1a1a18", fontWeight: 400, lineHeight: 1.3, cursor: "pointer", marginBottom: 4 }}>{slot.recipe.titre}</div>
                         <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                          <span style={{ fontSize: 10, color: "var(--color-text-tertiary)" }}>⏱ {slot.recipe.temps}</span>
-                          <button onClick={() => removeSlot(day, meal)} style={{ fontSize: 10, color: "#dc2626", background: "none", border: "none", cursor: "pointer" }}>✕</button>
+                          <span style={{ fontSize: 10, color: "#bbb", fontFamily: FONT_SANS }}>⏱ {slot.recipe.temps}</span>
+                          <button onClick={() => removeSlot(day, meal)} style={{ fontSize: 10, color: "#dc2626", background: "none", border: "none", cursor: "pointer", fontFamily: FONT_SANS }}>✕</button>
                         </div>
                       </div>
                     ) : (
-                      <div onClick={() => { setSelectedSlot({ day, meal }); setMealRecipe(null); }} style={{ fontSize: 11, color: SAGE, cursor: "pointer", fontWeight: 500 }}>+ Suggérer</div>
+                      <div onClick={() => { setSelectedSlot({ day, meal }); setMealRecipe(null); }} style={{ fontSize: 11, color: SAGE, cursor: "pointer", fontWeight: 500, fontFamily: FONT_SANS }}>+ Suggérer</div>
                     )}
                   </div>
                 );
@@ -561,45 +603,32 @@ function MealPlanner({ plan, setPlan, premium, user }: { plan: MealPlan; setPlan
         ))}
       </div>
 
-      {premium && filledCount > 0 && (
-        <div style={{ marginTop: 16 }}>
-          <div style={{ fontSize: 11, fontWeight: 500, color: "var(--color-text-tertiary)", textTransform: "uppercase" as const, letterSpacing: "0.8px", marginBottom: 10 }}>Liste de courses</div>
-          <ShoppingList plan={plan} />
-        </div>
-      )}
-
-      {!premium && (
-        <div style={{ marginTop: 12, padding: "0.875rem 1rem", background: SAGE_LIGHT, borderRadius: 10, fontSize: 12, color: "#27500A", textAlign: "center" }}>
-          🛒 La liste de courses est disponible en Premium
-        </div>
-      )}
-
       {/* Suggestion modal */}
       {selectedSlot && (
         <div style={{ position: "fixed" as const, inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 100, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={() => { setSelectedSlot(null); setMealRecipe(null); }}>
-          <div style={{ background: "#f9f7f4", borderRadius: "20px 20px 0 0", width: "100%", maxWidth: 640, maxHeight: "85vh", overflowY: "auto" as const }} onClick={(e) => e.stopPropagation()}>
-            <div style={{ background: "#fff", padding: "1rem 1.25rem", borderBottom: "0.5px solid var(--color-border-tertiary)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky" as const, top: 0, zIndex: 1 }}>
+          <div style={{ background: CREAM, borderRadius: "20px 20px 0 0", width: "100%", maxWidth: 640, maxHeight: "85vh", overflowY: "auto" as const }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ background: "#fff", padding: "1rem 1.25rem", borderBottom: `0.5px solid ${BORDER}`, display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky" as const, top: 0 }}>
               <div>
-                <div style={{ fontSize: 11, color: SAGE, textTransform: "uppercase" as const, letterSpacing: "0.8px", fontWeight: 500, marginBottom: 2 }}>{selectedSlot.day} — {MEAL_LABELS[selectedSlot.meal]}</div>
-                <div style={{ fontSize: 15, fontWeight: 500, color: "var(--color-text-primary)" }}>{mealRecipe ? mealRecipe.titre : "Suggestion IA"}</div>
+                <div style={{ fontSize: 10, color: SAGE, textTransform: "uppercase" as const, letterSpacing: "1px", fontWeight: 500, marginBottom: 2, fontFamily: FONT_SANS }}>{selectedSlot.day} — {MEAL_LABELS[selectedSlot.meal]}</div>
+                <div style={{ fontFamily: FONT_SERIF, fontSize: 16, color: "#1a1a18", fontWeight: 400 }}>{mealRecipe ? mealRecipe.titre : "Suggestion IA"}</div>
               </div>
-              <button onClick={() => { setSelectedSlot(null); setMealRecipe(null); }} style={{ width: 30, height: 30, borderRadius: "50%", border: "0.5px solid var(--color-border-tertiary)", background: "#fff", cursor: "pointer", fontSize: 16, color: "var(--color-text-secondary)" }}>×</button>
+              <button onClick={() => { setSelectedSlot(null); setMealRecipe(null); }} style={{ width: 30, height: 30, borderRadius: "50%", border: `0.5px solid ${BORDER}`, background: "#fff", cursor: "pointer", fontSize: 16, color: "#888" }}>×</button>
             </div>
             <div style={{ padding: "1rem 1.25rem" }}>
               {!mealRecipe && !mealLoading && (
-                <button onClick={() => generateSuggestion(selectedSlot.day, selectedSlot.meal)} style={{ width: "100%", height: 44, borderRadius: 10, border: "none", background: "#1a1a1a", color: "#fff", fontSize: 14, fontWeight: 500, cursor: "pointer" }}>
+                <button onClick={() => generateSuggestion(selectedSlot.day, selectedSlot.meal)} style={{ width: "100%", height: 44, borderRadius: 10, border: "none", background: "#1a1a18", color: "#fff", fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: FONT_SANS }}>
                   Suggérer une recette →
                 </button>
               )}
-              {mealLoading && <div style={{ textAlign: "center", padding: "2rem", color: "var(--color-text-secondary)", fontSize: 13 }}>🍳 Préparation…</div>}
+              {mealLoading && <div style={{ textAlign: "center", padding: "2rem", color: "#bbb", fontSize: 13, fontFamily: FONT_SANS }}>🍳 Préparation…</div>}
               {mealRecipe && !mealLoading && (
                 <>
-                  <div style={{ background: "#fff", borderRadius: 12, border: "0.5px solid var(--color-border-tertiary)", padding: "1rem", marginBottom: 10 }}>
-                    <div style={{ fontSize: 15, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 6 }}>{mealRecipe.titre}</div>
-                    <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>⏱ {mealRecipe.temps} · {mealRecipe.difficulte} · {mealRecipe.calories}</div>
+                  <div style={{ background: "#fff", borderRadius: 12, border: `0.5px solid ${BORDER}`, padding: "1rem", marginBottom: 10 }}>
+                    <div style={{ fontFamily: FONT_SERIF, fontSize: 16, color: "#1a1a18", marginBottom: 6, fontWeight: 400 }}>{mealRecipe.titre}</div>
+                    <div style={{ fontSize: 12, color: "#888", fontFamily: FONT_SANS }}>⏱ {mealRecipe.temps} · {mealRecipe.difficulte} · {mealRecipe.calories}</div>
                   </div>
                   {!plan[selectedSlot.day]?.[selectedSlot.meal] && (
-                    <button onClick={addToPlan} style={{ width: "100%", height: 44, borderRadius: 10, border: "none", background: SAGE, color: "#fff", fontSize: 14, fontWeight: 500, cursor: "pointer" }}>
+                    <button onClick={addToPlan} style={{ width: "100%", height: 44, borderRadius: 10, border: "none", background: SAGE, color: "#fff", fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: FONT_SANS }}>
                       ✓ Ajouter au planning
                     </button>
                   )}
@@ -619,16 +648,16 @@ function MealPlanner({ plan, setPlan, premium, user }: { plan: MealPlan; setPlan
 
 // ---- SHARED RECIPE VIEW ----
 function SharedRecipeView({ recipe, onBack }: { recipe: Recipe; onBack: () => void }) {
-  const emptyPlanRef = useRef(emptyPlan());
-  const [_plan, _setPlan] = useState(emptyPlanRef.current);
+  const planRef = useRef(emptyPlan());
+  const [_plan, _setPlan] = useState(planRef.current);
   return (
     <div style={{ minHeight: "100vh", background: CREAM }}>
-      <div style={{ background: "#fff", borderBottom: "0.5px solid var(--color-border-tertiary)", padding: "0 1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between", height: 56 }}>
-        <div style={{ fontSize: 16, fontWeight: 500, color: "var(--color-text-primary)" }}>Petit<span style={{ color: SAGE }}>Chef</span></div>
-        <button onClick={onBack} style={{ fontSize: 12, color: SAGE, background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>← Découvrir</button>
+      <div style={{ background: "#fff", borderBottom: `0.5px solid ${BORDER}`, padding: "0 1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between", height: 56 }}>
+        <div style={{ fontFamily: FONT_SERIF, fontSize: 18, color: "#1a1a18", fontWeight: 400 }}>Petit<span style={{ color: SAGE, fontStyle: "italic" }}>Chef</span></div>
+        <button onClick={onBack} style={{ fontSize: 12, color: SAGE, background: "none", border: "none", cursor: "pointer", fontWeight: 500, fontFamily: FONT_SANS }}>← Découvrir</button>
       </div>
       <div style={{ maxWidth: 640, margin: "0 auto", padding: "1.25rem" }}>
-        <div style={{ fontSize: 12, color: "var(--color-text-tertiary)", marginBottom: 12 }}>Une recette partagée via PetitChef</div>
+        <div style={{ fontSize: 12, color: "#bbb", marginBottom: 12, fontFamily: FONT_SANS }}>Une recette partagée via PetitChef</div>
         <RecipeModal recipe={recipe} onClose={onBack} plan={_plan} setPlan={_setPlan} onFavLimited={() => {}} user={null} />
       </div>
     </div>
@@ -657,8 +686,8 @@ export default function App() {
   const [usage, setUsage] = useState(getUsage());
   const [openRecipe, setOpenRecipe] = useState<Recipe | null>(null);
   const [sharedRecipe, setSharedRecipe] = useState<Recipe | null>(null);
-  const [showInstall, setShowInstall] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstall, setShowInstall] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -671,7 +700,7 @@ export default function App() {
     const success = params.get("success");
     if (success) { localStorage.setItem("premium", JSON.stringify({ active: true })); setPremium(true); window.history.replaceState({}, "", "/"); }
 
-    window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); setDeferredPrompt(e); setShowInstall(true); });
+    window.addEventListener("beforeinstallprompt", (e: any) => { e.preventDefault(); setDeferredPrompt(e); setShowInstall(true); });
   }, []);
 
   useEffect(() => {
@@ -719,7 +748,11 @@ export default function App() {
   };
 
   const installApp = async () => {
-    if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === "accepted") setShowInstall(false); }
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") setShowInstall(false);
+    }
   };
 
   const signOut = async () => { await supabase.auth.signOut(); setUser(null); setUserMenuOpen(false); };
@@ -730,136 +763,127 @@ export default function App() {
   const searchesLeft = isPremiumLocal() ? "∞" : Math.max(0, 3 - usage.searches);
 
   return (
-    <div style={{ minHeight: "100vh", background: CREAM, fontFamily: "var(--font-sans)" }}>
+    <div style={{ minHeight: "100vh", background: CREAM }}>
       {showPremium && <PremiumPage onClose={() => setShowPremium(false)} />}
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} onSuccess={(u) => { setUser(u); setShowAuth(false); }} />}
       {openRecipe && <RecipeModal recipe={openRecipe} onClose={() => setOpenRecipe(null)} plan={plan} setPlan={setPlan} onFavLimited={() => setLimitType("favs")} user={user} />}
 
       {/* Navbar */}
-      <div style={{ background: "#fff", borderBottom: "0.5px solid var(--color-border-tertiary)", padding: "0 1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between", height: 56, position: "sticky" as const, top: 0, zIndex: 50 }}>
-        <div style={{ fontSize: 17, fontWeight: 500, color: "var(--color-text-primary)", letterSpacing: "-0.3px" }}>
-          Petit<span style={{ color: SAGE }}>Chef</span>
+      <div style={{ background: "#fff", borderBottom: `0.5px solid ${BORDER}`, padding: "12px 1.25rem 10px", position: "sticky" as const, top: 0, zIndex: 50 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: showInstall ? 10 : 0 }}>
+          <div style={{ fontFamily: FONT_SERIF, fontSize: 20, color: "#1a1a18", fontWeight: 400 }}>
+            Petit<span style={{ color: SAGE, fontStyle: "italic" }}>Chef</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            {!premium && <span style={{ fontSize: 10, color: "#bbb", fontFamily: FONT_SANS }}>{searchesLeft} restante{Number(searchesLeft) !== 1 ? "s" : ""}</span>}
+            {premium && <span style={{ fontSize: 10, fontWeight: 500, color: SAGE, background: SAGE_LIGHT, padding: "3px 8px", borderRadius: 999, border: `0.5px solid ${SAGE_MID}`, fontFamily: FONT_SANS }}>Premium</span>}
+            {!premium && (
+              <button onClick={() => setShowPremium(true)} style={{ padding: "5px 12px", borderRadius: 8, border: "none", background: "#1a1a18", color: "#fff", fontSize: 11, fontWeight: 500, cursor: "pointer", fontFamily: FONT_SANS }}>Premium</button>
+            )}
+            {user ? (
+              <div style={{ position: "relative" as const }}>
+                <button onClick={() => setUserMenuOpen(!userMenuOpen)} style={{ width: 30, height: 30, borderRadius: "50%", border: `0.5px solid ${BORDER}`, background: SAGE_LIGHT, color: SAGE, fontSize: 11, fontWeight: 500, cursor: "pointer", fontFamily: FONT_SANS }}>
+                  {user.email?.[0].toUpperCase()}
+                </button>
+                {userMenuOpen && (
+                  <div style={{ position: "absolute" as const, right: 0, top: 36, background: "#fff", border: `0.5px solid ${BORDER}`, borderRadius: 10, padding: "6px", minWidth: 160, boxShadow: "0 4px 20px rgba(0,0,0,0.08)", zIndex: 100 }}>
+                    <div style={{ fontSize: 10, color: "#bbb", padding: "4px 8px", marginBottom: 2, fontFamily: FONT_SANS }}>{user.email}</div>
+                    <button onClick={signOut} style={{ width: "100%", padding: "7px 8px", borderRadius: 7, border: "none", background: "transparent", color: "#dc2626", fontSize: 12, cursor: "pointer", textAlign: "left" as const, fontFamily: FONT_SANS }}>Se déconnecter</button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button onClick={() => setShowAuth(true)} style={{ padding: "5px 12px", borderRadius: 8, border: `0.5px solid ${BORDER}`, background: "#fff", color: "#888", fontSize: 11, cursor: "pointer", fontFamily: FONT_SANS }}>Connexion</button>
+            )}
+          </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {!premium && <span style={{ fontSize: 11, color: "var(--color-text-tertiary)" }}>{searchesLeft} restante{Number(searchesLeft) !== 1 ? "s" : ""}</span>}
-          {premium && <span style={{ fontSize: 11, fontWeight: 500, color: SAGE, background: SAGE_LIGHT, padding: "3px 8px", borderRadius: 999, border: `0.5px solid ${SAGE_MID}` }}>Premium</span>}
-          {!premium && (
-            <button onClick={() => setShowPremium(true)} style={{ padding: "5px 12px", borderRadius: 8, border: "none", background: "#1a1a1a", color: "#fff", fontSize: 12, fontWeight: 500, cursor: "pointer" }}>Premium</button>
-          )}
-          {user ? (
-            <div style={{ position: "relative" as const }}>
-              <button onClick={() => setUserMenuOpen(!userMenuOpen)} style={{ width: 32, height: 32, borderRadius: "50%", border: "0.5px solid var(--color-border-secondary)", background: SAGE_LIGHT, color: SAGE, fontSize: 12, fontWeight: 500, cursor: "pointer" }}>
-                {user.email?.[0].toUpperCase()}
-              </button>
-              {userMenuOpen && (
-                <div style={{ position: "absolute" as const, right: 0, top: 38, background: "#fff", border: "0.5px solid var(--color-border-tertiary)", borderRadius: 10, padding: "6px", minWidth: 160, boxShadow: "0 4px 20px rgba(0,0,0,0.08)", zIndex: 100 }}>
-                  <div style={{ fontSize: 11, color: "var(--color-text-tertiary)", padding: "4px 8px", marginBottom: 2 }}>{user.email}</div>
-                  <button onClick={signOut} style={{ width: "100%", padding: "7px 8px", borderRadius: 7, border: "none", background: "transparent", color: "#dc2626", fontSize: 12, cursor: "pointer", textAlign: "left" as const }}>Se déconnecter</button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <button onClick={() => setShowAuth(true)} style={{ padding: "5px 12px", borderRadius: 8, border: "0.5px solid var(--color-border-secondary)", background: "#fff", color: "var(--color-text-secondary)", fontSize: 12, cursor: "pointer" }}>Connexion</button>
-          )}
-        </div>
+
+        {showInstall && (
+          <button onClick={installApp} style={{ width: "100%", height: 36, borderRadius: 10, border: `0.5px solid ${SAGE_MID}`, background: SAGE_LIGHT, color: SAGE, fontSize: 12, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontFamily: FONT_SANS }}>
+            <span style={{ fontSize: 14 }}>⬇</span> Installer l'application sur mon téléphone
+          </button>
+        )}
       </div>
 
       {/* Hero */}
-      <div style={{ background: "#fff", padding: "24px 1.25rem 20px", borderBottom: "0.5px solid var(--color-border-tertiary)" }}>
+      <div style={{ background: "#fff", padding: "24px 1.25rem 20px", borderBottom: `0.5px solid ${BORDER}` }}>
         <div style={{ maxWidth: 600, margin: "0 auto" }}>
-          <div style={{ fontSize: 10, color: SAGE, letterSpacing: "1.5px", textTransform: "uppercase" as const, marginBottom: 10, fontWeight: 500, display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ width: 5, height: 5, borderRadius: "50%", background: SAGE }} />
+          <div style={{ fontSize: 10, color: SAGE, letterSpacing: "2px", textTransform: "uppercase" as const, marginBottom: 10, fontWeight: 500, display: "flex", alignItems: "center", gap: 6, fontFamily: FONT_SANS }}>
+            <div style={{ width: 4, height: 4, borderRadius: "50%", background: SAGE }} />
             IA culinaire
           </div>
-          <h1 style={{ fontSize: 24, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 6, letterSpacing: "-0.5px", lineHeight: 1.2 }}>
-            Qu'est-ce qu'on cuisine aujourd'hui ?
+          <h1 style={{ fontFamily: FONT_SERIF, fontSize: 26, fontWeight: 400, color: "#1a1a18", marginBottom: 6, letterSpacing: "-0.3px", lineHeight: 1.2 }}>
+            Qu'est-ce qu'on cuisine <em style={{ color: SAGE }}>aujourd'hui</em> ?
           </h1>
-          <p style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 18, lineHeight: 1.6 }}>
-            Entre un ingrédient ou un type — PetitChef génère 3 recettes personnalisées.
+          <p style={{ fontSize: 13, color: "#888", marginBottom: 18, lineHeight: 1.6, fontFamily: FONT_SANS }}>
+            Entre un ingrédient ou un type de plat — PetitChef génère 3 recettes personnalisées.
           </p>
 
           <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-            <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, height: 42, padding: "0 12px", borderRadius: 10, border: "0.5px solid var(--color-border-secondary)", background: CREAM }}>
-              <span style={{ color: "var(--color-text-tertiary)", fontSize: 14 }}>🔍</span>
-              <input value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && generate()} placeholder="poulet, riz, citron…" style={{ flex: 1, border: "none", background: "transparent", fontSize: 13, color: "var(--color-text-primary)", outline: "none" }} />
+            <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, height: 42, padding: "0 12px", borderRadius: 10, border: `0.5px solid ${BORDER}`, background: CREAM }}>
+              <span style={{ color: "#bbb", fontSize: 14 }}>🔍</span>
+              <input value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && generate()} placeholder="poulet, riz, citron…" style={{ flex: 1, border: "none", background: "transparent", fontSize: 13, color: "#1a1a18", outline: "none", fontFamily: FONT_SANS }} />
             </div>
-            <button onClick={() => generate()} disabled={loading} style={{ height: 42, padding: "0 18px", borderRadius: 10, border: "none", background: loading ? "#888" : "#1a1a1a", color: "#fff", fontSize: 13, fontWeight: 500, cursor: "pointer", whiteSpace: "nowrap" as const }}>
+            <button onClick={() => generate()} disabled={loading} style={{ height: 42, padding: "0 18px", borderRadius: 10, border: "none", background: loading ? "#888" : "#1a1a18", color: "#fff", fontSize: 13, fontWeight: 500, cursor: "pointer", whiteSpace: "nowrap" as const, fontFamily: FONT_SANS }}>
               {loading ? "…" : "Trouver"}
             </button>
           </div>
 
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" as const, marginBottom: 10 }}>
             {FILTERS.map((f) => (
-              <button key={f} onClick={() => toggleFilter(f)} style={{ padding: "4px 12px", borderRadius: 999, border: `0.5px solid ${activeFilters.includes(f) ? SAGE : "var(--color-border-tertiary)"}`, fontSize: 11, color: activeFilters.includes(f) ? SAGE : "var(--color-text-secondary)", background: activeFilters.includes(f) ? SAGE_LIGHT : "#fff", cursor: "pointer", fontWeight: activeFilters.includes(f) ? 500 : 400 }}>
+              <button key={f} onClick={() => toggleFilter(f)} style={{ padding: "4px 12px", borderRadius: 999, border: `0.5px solid ${activeFilters.includes(f) ? SAGE : BORDER}`, fontSize: 11, color: activeFilters.includes(f) ? SAGE : "#888", background: activeFilters.includes(f) ? SAGE_LIGHT : "#fff", cursor: "pointer", fontFamily: FONT_SANS, fontWeight: activeFilters.includes(f) ? 500 : 400 }}>
                 {f}
               </button>
             ))}
           </div>
 
           <div style={{ display: "flex", gap: 5, flexWrap: "wrap" as const, alignItems: "center" }}>
-            <span style={{ fontSize: 11, color: "var(--color-text-tertiary)" }}>Suggestions :</span>
+            <span style={{ fontSize: 11, color: "#bbb", fontFamily: FONT_SANS }}>Suggestions :</span>
             {SUGGESTIONS.map((s) => (
-              <span key={s} onClick={() => { setQuery(s); generate(s); }} style={{ fontSize: 11, color: "var(--color-text-secondary)", cursor: "pointer", padding: "3px 10px", borderRadius: 999, background: "var(--color-background-secondary)", border: "0.5px solid var(--color-border-tertiary)" }}>{s}</span>
+              <span key={s} onClick={() => { setQuery(s); generate(s); }} style={{ fontSize: 11, color: "#888", cursor: "pointer", padding: "3px 10px", borderRadius: 999, background: CREAM, border: `0.5px solid ${BORDER}`, fontFamily: FONT_SANS }}>{s}</span>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Install banner */}
-      {showInstall && (
-        <div style={{ margin: "12px 1.25rem 0", padding: "10px 14px", borderRadius: 10, border: `0.5px solid ${SAGE_MID}`, background: SAGE_LIGHT, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-          <div style={{ fontSize: 12, color: "#27500A", lineHeight: 1.4 }}>Installe PetitChef sur ton écran d'accueil</div>
-          <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-            <button onClick={installApp} style={{ padding: "5px 12px", borderRadius: 8, border: "none", background: SAGE, color: "#fff", fontSize: 11, fontWeight: 500, cursor: "pointer" }}>Installer</button>
-            <button onClick={() => setShowInstall(false)} style={{ padding: "5px 8px", borderRadius: 8, border: "0.5px solid var(--color-border-tertiary)", background: "#fff", color: "var(--color-text-tertiary)", fontSize: 11, cursor: "pointer" }}>×</button>
-          </div>
-        </div>
-      )}
-
       {/* Content */}
       <div style={{ maxWidth: 640, margin: "0 auto", padding: "16px 1.25rem" }}>
-        {/* Tabs */}
-        <div style={{ display: "flex", borderBottom: "0.5px solid var(--color-border-tertiary)", marginBottom: 16 }}>
+        <div style={{ display: "flex", borderBottom: `0.5px solid ${BORDER}`, marginBottom: 16 }}>
           {[
             { id: "recettes", label: "Recettes" },
             { id: "planning", label: filledCount > 0 ? `Planning (${filledCount})` : "Planning" },
             { id: "favoris", label: "Favoris" },
             { id: "historique", label: "Historique" },
           ].map((t) => (
-            <button key={t.id} onClick={() => setTab(t.id)} style={{ flex: 1, padding: "8px 4px", fontSize: 12, fontWeight: tab === t.id ? 500 : 400, color: tab === t.id ? "var(--color-text-primary)" : "var(--color-text-tertiary)", background: "none", border: "none", borderBottom: `1.5px solid ${tab === t.id ? "#1a1a1a" : "transparent"}`, marginBottom: -1, cursor: "pointer" }}>
+            <button key={t.id} onClick={() => setTab(t.id)} style={{ flex: 1, padding: "8px 4px", fontSize: 12, fontWeight: tab === t.id ? 500 : 400, color: tab === t.id ? "#1a1a18" : "#bbb", background: "none", border: "none", borderBottom: `1.5px solid ${tab === t.id ? "#1a1a18" : "transparent"}`, marginBottom: -1, cursor: "pointer", fontFamily: FONT_SANS }}>
               {t.label}
             </button>
           ))}
         </div>
 
-        {/* Recettes */}
         {tab === "recettes" && (
           <>
             {limitType && <LimitBanner type={limitType} onUpgrade={() => setShowPremium(true)} />}
             {loading && (
               <div style={{ textAlign: "center", padding: "4rem 1rem" }}>
-                <div style={{ fontSize: 32, marginBottom: 12 }}>🍳</div>
-                <div style={{ fontSize: 14, color: "var(--color-text-secondary)", fontWeight: 500 }}>Préparation des recettes…</div>
+                <div style={{ fontFamily: FONT_SERIF, fontSize: 18, color: "#888", fontWeight: 400, fontStyle: "italic" }}>Le chef prépare vos recettes…</div>
               </div>
             )}
             {error && (
-              <div style={{ background: "#fff8f6", border: "0.5px solid #fbd5c5", borderRadius: 10, padding: "0.875rem 1rem", fontSize: 12, color: "#c2410c", marginBottom: 14 }}>
-                {error}
-              </div>
+              <div style={{ background: "#fff8f6", border: "0.5px solid #fbd5c5", borderRadius: 10, padding: "0.875rem 1rem", fontSize: 12, color: "#c2410c", marginBottom: 14, fontFamily: FONT_SANS }}>{error}</div>
             )}
             {!loading && !searched && (
               <div style={{ textAlign: "center", padding: "4rem 1rem" }}>
-                <div style={{ fontSize: 40, marginBottom: 14 }}>👨‍🍳</div>
-                <div style={{ fontSize: 16, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 6 }}>Bienvenue sur PetitChef</div>
-                <div style={{ fontSize: 13, color: "var(--color-text-tertiary)", lineHeight: 1.6, marginBottom: 16 }}>Entre un ingrédient ci-dessus pour commencer</div>
+                <div style={{ fontFamily: FONT_SERIF, fontSize: 22, color: "#1a1a18", fontWeight: 400, fontStyle: "italic", marginBottom: 8 }}>Bienvenue sur PetitChef</div>
+                <div style={{ fontSize: 13, color: "#bbb", lineHeight: 1.6, marginBottom: 16, fontFamily: FONT_SANS }}>Entre un ingrédient ci-dessus pour commencer</div>
                 {!premium && (
-                  <div style={{ display: "inline-block", padding: "8px 16px", background: SAGE_LIGHT, borderRadius: 10, fontSize: 12, color: "#27500A" }}>
+                  <div style={{ display: "inline-block", padding: "8px 16px", background: SAGE_LIGHT, borderRadius: 10, fontSize: 12, color: "#27500A", fontFamily: FONT_SANS }}>
                     {searchesLeft} recherche{Number(searchesLeft) !== 1 ? "s" : ""} gratuite{Number(searchesLeft) !== 1 ? "s" : ""} aujourd'hui
                   </div>
                 )}
               </div>
             )}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {recipes.map((r, i) => <RecipeCard key={i} recipe={r} index={i} onOpen={setOpenRecipe} />)}
             </div>
           </>
@@ -871,12 +895,11 @@ export default function App() {
           <div>
             {favorites.length === 0 ? (
               <div style={{ textAlign: "center", padding: "4rem 1rem" }}>
-                <div style={{ fontSize: 32, marginBottom: 12 }}>♥</div>
-                <div style={{ fontSize: 14, color: "var(--color-text-secondary)", fontWeight: 500 }}>Aucun favori pour l'instant</div>
-                <div style={{ fontSize: 12, color: "var(--color-text-tertiary)", marginTop: 4 }}>Appuie sur ♡ dans une recette pour sauvegarder</div>
+                <div style={{ fontFamily: FONT_SERIF, fontSize: 18, color: "#888", fontWeight: 400, fontStyle: "italic", marginBottom: 6 }}>Aucun favori pour l'instant</div>
+                <div style={{ fontSize: 12, color: "#bbb", fontFamily: FONT_SANS }}>Appuie sur ♡ dans une recette pour sauvegarder</div>
               </div>
             ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {favorites.map((r, i) => <RecipeCard key={i} recipe={r} index={i} onOpen={setOpenRecipe} />)}
               </div>
             )}
@@ -886,13 +909,13 @@ export default function App() {
         {tab === "historique" && (
           <div>
             {history.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "4rem 1rem", color: "var(--color-text-tertiary)", fontSize: 13 }}>Aucune recherche récente.</div>
+              <div style={{ textAlign: "center", padding: "4rem 1rem", color: "#bbb", fontSize: 13, fontFamily: FONT_SANS }}>Aucune recherche récente.</div>
             ) : (
-              <div style={{ background: "#fff", borderRadius: 12, border: "0.5px solid var(--color-border-tertiary)", overflow: "hidden" }}>
+              <div style={{ background: "#fff", borderRadius: 12, border: `0.5px solid ${BORDER}`, overflow: "hidden" }}>
                 {history.map((h, i) => (
-                  <div key={i} onClick={() => { setQuery(h.q); generate(h.q); }} style={{ padding: "0.875rem 1rem", borderBottom: i < history.length - 1 ? "0.5px solid var(--color-border-tertiary)" : "none", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
-                    <span style={{ fontSize: 13, color: "var(--color-text-primary)", fontWeight: 500 }}>{h.q}</span>
-                    <span style={{ fontSize: 11, color: "var(--color-text-tertiary)" }}>{h.time}</span>
+                  <div key={i} onClick={() => { setQuery(h.q); generate(h.q); }} style={{ padding: "0.875rem 1rem", borderBottom: i < history.length - 1 ? `0.5px solid ${BORDER}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
+                    <span style={{ fontFamily: FONT_SERIF, fontSize: 14, color: "#1a1a18", fontWeight: 400 }}>{h.q}</span>
+                    <span style={{ fontSize: 11, color: "#bbb", fontFamily: FONT_SANS }}>{h.time}</span>
                   </div>
                 ))}
               </div>
@@ -901,8 +924,8 @@ export default function App() {
         )}
       </div>
 
-      <div style={{ textAlign: "center", padding: "2rem 1rem", borderTop: "0.5px solid var(--color-border-tertiary)", marginTop: "1rem" }}>
-        <span style={{ fontSize: 11, color: "var(--color-text-tertiary)" }}>Petit<span style={{ color: SAGE }}>Chef</span> · Cuisine intelligente propulsée par IA</span>
+      <div style={{ textAlign: "center", padding: "2rem 1rem", borderTop: `0.5px solid ${BORDER}`, marginTop: "1rem" }}>
+        <span style={{ fontFamily: FONT_SERIF, fontSize: 13, color: "#bbb" }}>Petit<em style={{ color: SAGE }}>Chef</em> · Cuisine intelligente par IA</span>
       </div>
     </div>
   );
