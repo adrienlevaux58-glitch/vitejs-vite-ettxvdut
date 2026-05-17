@@ -274,9 +274,9 @@ function ShoppingList({ plan, lang }: { plan: MealPlan; lang: Lang }) {
 }
 
 // ---- RECIPE MODAL ----
-function RecipeModal({ recipe, onClose, plan, setPlan, onFavLimited, user, lang }: {
+function RecipeModal({ recipe, onClose, plan, setPlan, onFavLimited, lang }: {
   recipe: Recipe; onClose: () => void; plan: MealPlan; setPlan: (p: MealPlan) => void;
-  onFavLimited: () => void; user: User | null; lang: Lang;
+  onFavLimited: () => void; user?: User | null; lang: Lang;
 }) {
   const T = t[lang];
   const DAYS = lang === "en" ? DAYS_EN : DAYS_FR;
@@ -436,8 +436,7 @@ function RecipeModal({ recipe, onClose, plan, setPlan, onFavLimited, user, lang 
 }
 
 // ---- RECIPE CARD ----
-function RecipeCard({ recipe, index, onOpen, lang }: { recipe: Recipe; index: number; onOpen: (r: Recipe) => void; lang: Lang }) {
-  const T = t[lang];
+function RecipeCard({ recipe, index, onOpen }: { recipe: Recipe; index: number; onOpen: (r: Recipe) => void }) {
   const diffColors: Record<string, string> = { "Facile": SAGE, "Easy": SAGE, "Moyen": "#BA7517", "Medium": "#BA7517", "Difficile": "#dc2626", "Hard": "#dc2626" };
   return (
     <div onClick={() => onOpen(recipe)} style={{ background: "#fff", borderRadius: 14, border: `0.5px solid ${BORDER}`, overflow: "hidden", display: "flex", cursor: "pointer", height: 96 }}>
@@ -458,9 +457,8 @@ function RecipeCard({ recipe, index, onOpen, lang }: { recipe: Recipe; index: nu
 }
 
 // ---- MEAL PLANNER ----
-function MealPlanner({ plan, setPlan, premium, user, lang }: { plan: MealPlan; setPlan: (p: MealPlan) => void; premium: boolean; user: User | null; lang: Lang }) {
+function MealPlanner({ plan, setPlan, premium, lang }: { plan: MealPlan; setPlan: (p: MealPlan) => void; premium: boolean; user?: User | null; lang: Lang }) {
   const T = t[lang];
-  const DAYS = lang === "en" ? DAYS_EN : DAYS_FR;
   const [selectedSlot, setSelectedSlot] = useState<{ day: string; meal: typeof MEALS[number] } | null>(null);
   const [mealLoading, setMealLoading] = useState(false);
   const [mealRecipe, setMealRecipe] = useState<Recipe | null>(null);
