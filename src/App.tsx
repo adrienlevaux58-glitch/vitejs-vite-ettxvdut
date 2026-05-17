@@ -436,7 +436,7 @@ function RecipeModal({ recipe, onClose, plan, setPlan, onFavLimited, lang }: {
 }
 
 // ---- RECIPE CARD ----
-function RecipeCard({ recipe, index, onOpen }: { recipe: Recipe; index: number; onOpen: (r: Recipe) => void }) {
+function RecipeCard({ recipe, index, onOpen }: { recipe: Recipe; index: number; onOpen: (r: Recipe) => void; lang?: Lang }) {
   const diffColors: Record<string, string> = { "Facile": SAGE, "Easy": SAGE, "Moyen": "#BA7517", "Medium": "#BA7517", "Difficile": "#dc2626", "Hard": "#dc2626" };
   return (
     <div onClick={() => onOpen(recipe)} style={{ background: "#fff", borderRadius: 14, border: `0.5px solid ${BORDER}`, overflow: "hidden", display: "flex", cursor: "pointer", height: 96 }}>
@@ -596,7 +596,7 @@ function MealPlanner({ plan, setPlan, premium, lang }: { plan: MealPlan; setPlan
       )}
 
       {openRecipe && (
-        <RecipeModal recipe={openRecipe} onClose={() => setOpenRecipe(null)} plan={plan} setPlan={setPlan} onFavLimited={() => {}} user={user} lang={lang} />
+        <RecipeModal recipe={openRecipe} onClose={() => setOpenRecipe(null)} plan={plan} setPlan={setPlan} onFavLimited={() => {}} lang={lang} />
       )}
     </div>
   );
