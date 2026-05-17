@@ -767,11 +767,11 @@ export default function App() {
             )}
           </div>
         </div>
-        {showInstall && (
-          <button onClick={installApp} style={{ ...btnGreen, width: "100%", height: 36, fontSize: 12, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-            <span>⬇</span> {T.install}
-          </button>
-        )}
+{showInstall && (
+  <button onClick={installApp} style={{ background: CREAM, color: TERRA, border: "none", borderRadius: 24, fontFamily: FONT_SANS, fontWeight: 700, cursor: "pointer", boxShadow: `0 2px 0 ${TERRA_DARK}`, width: "100%", height: 36, fontSize: 12, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+    <span>⬇</span> {T.install}
+  </button>
+)}
       </div>
 
       {/* Hero */}
